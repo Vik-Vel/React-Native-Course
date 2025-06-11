@@ -1,6 +1,13 @@
 import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
-import { StyleSheet, Text, View, Button, TextInput } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  TextInput,
+  FlatList,
+} from "react-native";
 
 export default function App() {
   const [enteredGoalText, setEnteredGoalText] = useState("");
@@ -11,7 +18,12 @@ export default function App() {
   }
 
   function addGoalHandler() {
-    setCourseGoal((currentCourseGoal) => [...courseGoals, enteredGoalText]);
+    setCourseGoal((currentCourseGoal) => [
+      ...currentCourseGoal, //We're using the spread operator to copy the existing goals
+      { text: enteredGoalText, key: Math.random().toString() }, //We're adding a new object (goal) to the list:
+      //text: the value from the input (enteredGoalText)
+      //key: a unique identifier (converted from a random number to string)
+    ]);
   }
 
   return (
@@ -25,11 +37,17 @@ export default function App() {
         <Button title="Add Goal" onPress={addGoalHandler}></Button>
       </View>
       <View style={styles.goalsContainer}>
-        {courseGoals.map((goal) => (
-          <View style={styles.goalItem} key={goal}>
-            <Text style={styles.goalText}>{goal}</Text>
-          </View>
-        ))}
+        <FlatList
+          data={courseGoals}
+          renderItem={(itemData) => {
+            return (
+              <View style={styles.goalItem}>
+                <Text style={styles.goalText}>{itemData.item.text}</Text>
+              </View>
+            );
+          }}
+          alwaysBounceVertical={false}
+        />
       </View>
     </View>
   );
